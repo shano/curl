@@ -1,0 +1,13 @@
+{
+	"name": "alexsoft/laravel-curl",
+	"authors": [
+		{
+			"name": "Alexey Plekhanov",
+			"email": ""
+		}
+	],
+	"require": {
+		"php": ">=5.3.0",
+		"lib-curl": "*"
+	}
+}
