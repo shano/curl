@@ -1,5 +1,6 @@
 {
 	"name": "alexsoft/laravel-curl",
+	"description": "cURL wrapper for laravel 4",
 	"authors": [
 		{
 			"name": "Alexey Plekhanov"
@@ -8,5 +9,9 @@
 	"require": {
 		"php": ">=5.3.0",
 		"lib-curl": "*"
-	}
+	},
+	"autoload": {
+		"psr-0": {"\\": "src/"}
+	},
+	"minimum-stability": "stable"
 }
