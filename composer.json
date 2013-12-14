@@ -11,7 +11,7 @@
 		"lib-curl": "*"
 	},
 	"autoload": {
-		"psr-0": {"Alexsoft\\LaravelCurl\\": "src/"}
+		"psr-0": {"Alexsoft\\": "src/"}
 	},
 	"minimum-stability": "stable"
 }
