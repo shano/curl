@@ -11,7 +11,14 @@
 		"lib-curl": "*"
 	},
 	"autoload": {
-		"psr-0": {"Alexsoft\\": "src/"}
+		"psr-0": {
+			"Alexsoft\\": "src/"
+		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1.x-dev"
+		}
 	},
 	"minimum-stability": "stable"
 }
