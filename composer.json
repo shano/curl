@@ -11,7 +11,7 @@
 		"lib-curl": "*"
 	},
 	"autoload": {
-		"psr-0": {"Curl": "src/"}
+		"psr-0": {"": "src/"}
 	},
 	"minimum-stability": "stable"
 }
