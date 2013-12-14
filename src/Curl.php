@@ -1,4 +1,5 @@
 <?php
+namespace Alexsoft\LaravelCurl;
 
 class Curl {
 	const VERSION = '0.0.1';
