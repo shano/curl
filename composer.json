@@ -2,8 +2,7 @@
 	"name": "alexsoft/laravel-curl",
 	"authors": [
 		{
-			"name": "Alexey Plekhanov",
-			"email": ""
+			"name": "Alexey Plekhanov"
 		}
 	],
 	"require": {
