@@ -2,7 +2,7 @@
 namespace Alexsoft\LaravelCurl;
 
 class Curl {
-	const VERSION = '0.0.1';
+	const VERSION = '0.1.0';
 
 	const GET = 'GET';
 	const POST = 'POST';
@@ -13,7 +13,18 @@ class Curl {
 	const OPTION = 'OPTION';
 	const PATCH = 'PATCH';
 
+	/**
+	 * cURL descriptor
+	 * @var resource
+	 */
 	protected $_request;
+
+	/**
+	 * String of cURL response
+	 * @var string
+	 */
+	protected $_response;
+
 	/**
 	 * User agent for requests
 	 * @var string
@@ -39,11 +50,22 @@ class Curl {
 		);
 	}
 
-	public function post() {
-
+	public function head($url, $data = NULL, $headers = NULL, $cookie = NULL) {
+		return $this->request(
+			$url,
+			$data,
+			static::HEAD,
+			$headers,
+			$cookie
+		);
 	}
 
 	public function request($url, $data = NULL, $method, $headers = NULL, $cookie = NULL) {
+		if ($method === static::GET && isset($data)) {
+			$url = trim($url, '/');
+			$url .= is_array($data) ? http_build_query($data) : $data;
+		}
+
 		$this->_request = curl_init();
 
 		$options = array(
@@ -57,27 +79,40 @@ class Curl {
 		);
 
 		curl_setopt_array($this->_request, $options);
-		$result = curl_exec($this->_request);
-		$this->parseResponse($result);
+		$this->_response = curl_exec($this->_request);
 		curl_close($this->_request);
+		return $this->_parseResponse();
 	}
 
-	public function parseResponse($result) {
-		list($responseParts['headers'], $responseParts['body'])
-			= explode("\r\n\r\n", $result, 2);
-		// var_dump($responseParts['headers']);
-		echo "<pre>";
-		foreach (explode("\r\n", $responseParts['headers']) as $r) {
-			var_dump(explode(" ", $r));
+	/**
+	 * Parses the response string
+	 * @return array|NULL
+	 */
+	protected function _parseResponse() {
+		if (isset($this->_response)) {
+			list($responseParts['headersString'], $responseParts['body']) = explode("\r\n\r\n", $this->_response, 2);
+
+			$headers = explode("\r\n", $responseParts['headersString']);
+			$cookies = array();
+			$first = TRUE;
+			foreach ($headers as $header) {
+				if ($first) {
+					list($responseParts['protocol'], $responseParts['statusCode'], $responseParts['statusMessage']) = explode(' ', $header);
+					$first = FALSE;
+				} else {
+					$tmp = (explode(': ', $header));
+					if ($tmp[0] === 'Set-Cookie') {
+						$c = explode('=', $tmp[1]);
+						$responseParts['cookies'][$c[0]] = $c[1];
+					} else {
+						$responseParts['headersArray'][$tmp[0]] = $tmp[1];
+					}
+				}
+			}
+
+			return $responseParts;
+		} else {
+			return NULL;
 		}
-		
-		// echo "<pre>";
-		// var_dump(explode(' ', $t));
-		// var_dump(explode("\r\n", $responseParts['headers']));
-		echo "</pre>";
-
-
-		// var_dump($t);
-		// var_dump(explode("\r\n", $t[0]));
 	}
 }
