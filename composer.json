@@ -1,6 +1,7 @@
 {
 	"name": "alexsoft/curl",
 	"description": "cURL wrapper",
+	"license": "GPL v2",
 	"authors": [
 		{
 			"name": "Alexey Plekhanov"
