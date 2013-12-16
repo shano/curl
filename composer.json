@@ -1,6 +1,6 @@
 {
-	"name": "alexsoft/laravel-curl",
-	"description": "cURL wrapper for laravel 4",
+	"name": "alexsoft/curl",
+	"description": "cURL wrapper",
 	"authors": [
 		{
 			"name": "Alexey Plekhanov"
