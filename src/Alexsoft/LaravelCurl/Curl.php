@@ -2,7 +2,7 @@
 namespace Alexsoft\LaravelCurl;
 
 class Curl {
-	const VERSION = '0.1.0';
+	const VERSION = '0.1.1';
 
 	const GET = 'GET';
 	const POST = 'POST';
