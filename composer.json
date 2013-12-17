@@ -1,7 +1,7 @@
 {
 	"name": "alexsoft/curl",
 	"description": "cURL wrapper",
-	"license": "GPL v2",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Alexey Plekhanov"
@@ -18,8 +18,8 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "0.2.x-dev"
+			"dev-master": "0.3.x-dev"
 		}
 	},
-	"minimum-stability": "stable"
+	"minimum-stability": "dev"
 }

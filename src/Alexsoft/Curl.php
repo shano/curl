@@ -9,9 +9,7 @@ class Curl {
 	const PUT = 'PUT';
 	const DELETE = 'DELETE';
 	const HEAD = 'HEAD';
-	const CONNECT = 'CONNECT';
-	const OPTION = 'OPTION';
-	const PATCH = 'PATCH';
+	const OPTIONS = 'OPTIONS';
 
 	/**
 	 * cURL descriptor
@@ -132,7 +130,6 @@ class Curl {
 		if (isset($this->_response)) {
 			list($responseParts['headersString'], $responseParts['body']) = explode("\r\n\r\n", $this->_response, 2);
 			$responseParts['body'] = htmlspecialchars($responseParts['body']);
-
 			$headers = explode("\r\n", $responseParts['headersString']);
 			$cookies = array();
 			$first = TRUE;
@@ -143,14 +140,14 @@ class Curl {
 				} else {
 					$tmp = (explode(': ', $header));
 					if ($tmp[0] === 'Set-Cookie') {
-						$c = explode('=', $tmp[1]);
+						$c = substr($tmp[1], 0, strpos($tmp[1], ';'));
+						$c = explode('=', $c, 2);
 						$responseParts['cookies'][$c[0]] = $c[1];
 					} else {
 						$responseParts['headersArray'][$tmp[0]] = $tmp[1];
 					}
 				}
 			}
-
 			return $responseParts;
 		} else {
 			return NULL;
