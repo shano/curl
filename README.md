@@ -1,5 +1,5 @@
 # cURL wrapper
-* * *
+
 ## Versions and changelog
 
 ### v0.2.0
