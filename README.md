@@ -2,7 +2,7 @@
 
 ## Versions and changelog
 
-### v0.2.0
+### v0.2.1
 Methods:
 - GET
 - HEAD
@@ -11,6 +11,7 @@ Methods:
 You can send data, headers and cookies along with the queries.
 
 ## Roadmap
+- Need to make cookie parsing as it was before (preg_match_all)
 - Refactor _parseResponse method
 - Probably refactor all Curl class
 - Add PUT, DELETE, OPTIONS methods
