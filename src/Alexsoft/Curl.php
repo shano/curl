@@ -2,7 +2,7 @@
 namespace Alexsoft;
 
 class Curl {
-	const VERSION = '0.2.0';
+	const VERSION = '0.2.1';
 
 	const GET = 'GET';
 	const POST = 'POST';
@@ -104,7 +104,7 @@ class Curl {
 			foreach ($headers as $key => $value) {
 				$headersToSend[] = "{$key}: {$value}";
 			}
-			$options[CURLOPT_HEADER] = $headersToSend;
+			$options[CURLOPT_HTTPHEADER] = $headersToSend;
 		}
 
 		// Set cookies if needed
