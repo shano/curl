@@ -3,7 +3,7 @@
 /**
  * Neat and tidy cURL wrapper for PHP
  *
- * @package  Curl
+ * @package Curl
  * @author  Alex Plekhanov
  * @link    https://github.com/alexsoft/curl
  * @license MIT
@@ -40,13 +40,11 @@ class Curl {
 	 */
 	protected $_userAgent;
 
-	public function __construct() {
-		$this->setUserAgent('alexsoft/curl v' . static::VERSION);
-	}
-
-	public function setUserAgent($userAgent) {
-		$this->_userAgent = $userAgent;
-		return $this;
+	public function __construct($userAgent = NULL) {
+		$this->_userAgent =
+			(isset($userAgent))
+			? $userAgent
+			:'alexsoft/curl v' . static::VERSION;
 	}
 
 	public function get($url, $data = NULL, $headers = NULL, $cookies = NULL) {
