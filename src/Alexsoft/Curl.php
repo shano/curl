@@ -7,19 +7,19 @@
  * @author  Alex Plekhanov
  * @link    https://github.com/alexsoft/curl
  * @license MIT
- * @version 0.2.1
+ * @version 0.2.2
  */
 
 namespace Alexsoft;
 
 class Curl {
-	const VERSION = '0.2.1';
+	const VERSION = '0.2.2';
 
 	const GET = 'GET';
 	const POST = 'POST';
+	const HEAD = 'HEAD';
 	const PUT = 'PUT';
 	const DELETE = 'DELETE';
-	const HEAD = 'HEAD';
 	const OPTIONS = 'OPTIONS';
 
 	/**
@@ -59,6 +59,16 @@ class Curl {
 		);
 	}
 
+	public function post($url, $data = NULL, $headers = NULL, $cookies = NULL) {
+		return $this->request(
+			$url,
+			$data,
+			static::POST,
+			$headers,
+			$cookies
+		);
+	}
+
 	public function head($url, $data = NULL, $headers = NULL, $cookies = NULL) {
 		return $this->request(
 			$url,
@@ -69,11 +79,31 @@ class Curl {
 		);
 	}
 
-	public function post($url, $data = NULL, $headers = NULL, $cookies = NULL) {
+	public function put($url, $data = NULL, $headers = NULL, $cookies = NULL) {
 		return $this->request(
 			$url,
 			$data,
-			static::POST,
+			static::PUT,
+			$headers,
+			$cookies
+		);
+	}
+
+	public function delete($url, $data = NULL, $headers = NULL, $cookies = NULL) {
+		return $this->request(
+			$url,
+			$data,
+			static::DELETE,
+			$headers,
+			$cookies
+		);
+	}
+
+	public function options($url, $data = NULL, $headers = NULL, $cookies = NULL) {
+		return $this->request(
+			$url,
+			$data,
+			static::OPTIONS,
 			$headers,
 			$cookies
 		);
@@ -144,6 +174,14 @@ class Curl {
 			$headers = explode("\r\n", $responseParts['headersString']);
 			$cookies = array();
 			$first = TRUE;
+			if (preg_match_all( '/Set-Cookie: (.*?)=(.*?)(\n|;)/i', $responseParts['headersString'], $matches)) {
+				if (!empty($matches)) {
+					foreach ($matches[1] as $key => $value) {
+						$cookies[$value] = $matches[2][$key];
+					}
+					$responseParts['cookies'] = $cookies;
+				}
+			}
 			foreach ($headers as $header) {
 				if ($first) {
 					list($responseParts['protocol'], $responseParts['statusCode'], $responseParts['statusMessage']) = explode(' ', $header);
@@ -151,9 +189,7 @@ class Curl {
 				} else {
 					$tmp = (explode(': ', $header));
 					if ($tmp[0] === 'Set-Cookie') {
-						$c = substr($tmp[1], 0, strpos($tmp[1], ';'));
-						$c = explode('=', $c, 2);
-						$responseParts['cookies'][$c[0]] = $c[1];
+						continue;
 					} else {
 						$responseParts['headersArray'][$tmp[0]] = $tmp[1];
 					}

@@ -2,6 +2,14 @@
 
 ## Versions and changelog
 
+### v0.2.2
+Added methods:
+- PUT
+- DELETE
+- OPTIONS
+
+Cookies are parsed with help of preg_match_all
+
 ### v0.2.1
 Methods:
 - GET
@@ -11,9 +19,7 @@ Methods:
 You can send data, headers and cookies along with the queries.
 
 ## Roadmap
-- Need to make cookie parsing as it was before (preg_match_all)
 - Refactor _parseResponse method
 - Probably refactor all Curl class
-- Add PUT, DELETE, OPTIONS methods
 - Write comments for class
 - Make a documentation
