@@ -1,4 +1,15 @@
 <?php
+
+/**
+ * Neat and tidy cURL wrapper for PHP
+ *
+ * @package  Curl
+ * @author  Alex Plekhanov
+ * @link    https://github.com/alexsoft/curl
+ * @license MIT
+ * @version 0.2.1
+ */
+
 namespace Alexsoft;
 
 class Curl {
