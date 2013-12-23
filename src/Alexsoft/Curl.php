@@ -7,13 +7,13 @@
  * @author  Alex Plekhanov
  * @link    https://github.com/alexsoft/curl
  * @license MIT
- * @version 0.2.2
+ * @version 0.3.0-rc.1
  */
 
 namespace Alexsoft;
 
 class Curl {
-	const VERSION = '0.2.2';
+	const VERSION = '0.3.0-rc.1';
 
 	const GET = 'GET';
 	const POST = 'POST';
@@ -23,148 +23,131 @@ class Curl {
 	const OPTIONS = 'OPTIONS';
 
 	/**
-	 * cURL descriptor
+	 * cURL handle
 	 * @var resource
 	 */
-	protected $_request;
+	protected $_resource;
 
-	/**
-	 * String of cURL response
-	 * @var string
-	 */
 	protected $_response;
 
-	/**
-	 * User agent for requests
-	 * @var string
-	 */
-	protected $_userAgent;
+	protected $_url;
+	protected $_method;
+	protected $_data = array();
+	protected $_headers = array();
+	protected $_cookies = array();
+	protected $_userAgent = 'alexsoft/curl';
 
-	public function __construct($userAgent = NULL) {
-		$this->_userAgent =
-			(isset($userAgent))
-			? $userAgent
-			:'alexsoft/curl v' . static::VERSION;
+	public function __construct($url) {
+		$this->_url = $url;
 	}
 
-	public function get($url, $data = NULL, $headers = NULL, $cookies = NULL) {
-		return $this->request(
-			$url,
-			$data,
-			static::GET,
-			$headers,
+	public function addData(array $data) {
+		$this->_data = array_merge(
+			$this->_data,
+			$data
+		);
+		return $this;
+	}
+
+	public function addHeaders(array $headers) {
+		$this->_headers = array_merge(
+			$this->_headers,
+			$headers
+		);
+		return $this;
+	}
+
+	public function addCookies(array $cookies) {
+		$this->_cookies = array_merge(
+			$this->_cookies,
 			$cookies
 		);
+		return $this;
 	}
 
-	public function post($url, $data = NULL, $headers = NULL, $cookies = NULL) {
-		return $this->request(
-			$url,
-			$data,
-			static::POST,
-			$headers,
-			$cookies
-		);
+	public function get() {
+		return $this->_request(static::GET);
 	}
 
-	public function head($url, $data = NULL, $headers = NULL, $cookies = NULL) {
-		return $this->request(
-			$url,
-			$data,
-			static::HEAD,
-			$headers,
-			$cookies
-		);
+	public function post() {
+		return $this->_request(static::POST);
 	}
 
-	public function put($url, $data = NULL, $headers = NULL, $cookies = NULL) {
-		return $this->request(
-			$url,
-			$data,
-			static::PUT,
-			$headers,
-			$cookies
-		);
+	public function head() {
+		return $this->_request(static::HEAD);
 	}
 
-	public function delete($url, $data = NULL, $headers = NULL, $cookies = NULL) {
-		return $this->request(
-			$url,
-			$data,
-			static::DELETE,
-			$headers,
-			$cookies
-		);
+	public function put() {
+		return $this->_request(static::PUT);
 	}
 
-	public function options($url, $data = NULL, $headers = NULL, $cookies = NULL) {
-		return $this->request(
-			$url,
-			$data,
-			static::OPTIONS,
-			$headers,
-			$cookies
-		);
+	public function delete() {
+		return $this->_request(static::DELETE);
 	}
 
-	public function request($url, $data = NULL, $method, $headers = NULL, $cookies = NULL) {
+	public function options() {
+		return $this->_request(static::OPTIONS);
+	}
+
+	protected function _request($method) {
+		$this->_resource = curl_init();
+		$this->_method = $method;
+		$this->_prepareRequest();
+		$this->_response = curl_exec($this->_resource);
+		curl_close($this->_resource);
+		return $this->_parseResponse();
+	}
+
+	protected function _prepareRequest() {
 		// Set data for GET queries
-		if ($method === static::GET && isset($data)) {
-			$url = trim($url, '/') . '?';
-			$url .= is_array($data) ? http_build_query($data) : $data;
+		if ($this->_method === static::GET && !empty($this->_data)) {
+			$url = trim($this->_url, '/') . '?';
+			$url .= http_build_query($this->_data);
+		} else {
+			$url = $this->_url;
 		}
-
-		$this->_request = curl_init();
 
 		// Set options
 		$options = array(
 			CURLOPT_URL => $url,
-			CURLOPT_POST => $method === static::POST,
+			CURLOPT_POST => $this->_method === static::POST,
 			CURLOPT_HEADER => TRUE,
-			CURLOPT_NOBODY => $method === static::HEAD,
+			CURLOPT_NOBODY => $this->_method === static::HEAD,
 			CURLOPT_RETURNTRANSFER => TRUE,
 			CURLOPT_USERAGENT => $this->_userAgent,
 			CURLOPT_SSL_VERIFYPEER => FALSE
 		);
 
-		if (!in_array($method, array(static::GET, static::HEAD, static::POST))) {
-			$options[CURLOPT_CUSTOMREQUEST] = $method;
+		if (!in_array($this->_method, array(static::GET, static::HEAD, static::POST))) {
+			$options[CURLOPT_CUSTOMREQUEST] = $this->_method;
 		}
 
 		// Set data for not GET queries
-		if (isset($data) && $method !== static::GET) {
-			$options[CURLOPT_POSTFIELDS]
-				= is_array($data) ? http_build_query($data) : $data;
+		if (!empty($this->_data) && $this->_method !== static::GET) {
+			$options[CURLOPT_POSTFIELDS] = http_build_query($this->_data);
 		}
 
 		// Set headers if needed
-		if (isset($headers)) {
+		if (!empty($this->_headers)) {
 			$headersToSend = array();
-			foreach ($headers as $key => $value) {
+			foreach ($this->_headers as $key => $value) {
 				$headersToSend[] = "{$key}: {$value}";
 			}
 			$options[CURLOPT_HTTPHEADER] = $headersToSend;
 		}
 
 		// Set cookies if needed
-		if (isset($cookies)) {
+		if (!empty($this->_cookies)) {
 			$cookiesToSend = array();
-			foreach ($cookies as $key => $value) {
+			foreach ($this->_cookies as $key => $value) {
 				$cookiesToSend[] = "{$key}={$value}";
 			}
 			$options[CURLOPT_COOKIE] = implode('; ', $cookiesToSend);
 		}
 
-		curl_setopt_array($this->_request, $options);
-		$this->_response = curl_exec($this->_request);
-		curl_close($this->_request);
-		return $this->_parseResponse();
+		curl_setopt_array($this->_resource, $options);
 	}
 
-	/**
-	 * Parses the response string
-	 * @return array|NULL
-	 */
 	protected function _parseResponse() {
 		if (isset($this->_response)) {
 			list($responseParts['headersString'], $responseParts['body']) = explode("\r\n\r\n", $this->_response, 2);
