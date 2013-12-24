@@ -2,6 +2,12 @@
 
 ## Versions and changelog
 
+### v0.3.0
+Wrapper is totally reworked almost from scratch!
+Different approach for setting data, headers and cookies.
+Just open the class and see it!
+And by the way all class is now documented!
+
 ### v0.2.2
 Added methods:
 - PUT
@@ -20,6 +26,4 @@ You can send data, headers and cookies along with the queries.
 
 ## Roadmap
 - Refactor _parseResponse method
-- Probably refactor all Curl class
-- Write comments for class
 - Make a documentation
