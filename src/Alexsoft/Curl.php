@@ -7,13 +7,13 @@
  * @author  Alex Plekhanov
  * @link    https://github.com/alexsoft/curl
  * @license MIT
- * @version 0.3.0-rc.1
+ * @version 0.3.0
  */
 
 namespace Alexsoft;
 
 class Curl {
-	const VERSION = '0.3.0-rc.1';
+	const VERSION = '0.3.0';
 
 	const GET = 'GET';
 	const POST = 'POST';
@@ -28,19 +28,60 @@ class Curl {
 	 */
 	protected $_resource;
 
+	/**
+	 * Response string from curl_exec
+	 * @var string
+	 */
 	protected $_response;
 
+	/**
+	 * URL to query
+	 * @var string
+	 */
 	protected $_url;
+
+	/**
+	 * HTTP Verb
+	 * @var string
+	 */
 	protected $_method;
+
+	/**
+	 * Key => value of data to send
+	 * @var array
+	 */
 	protected $_data = array();
+
+	/**
+	 * Key => value of headers to send
+	 * @var array
+	 */
 	protected $_headers = array();
+
+	/**
+	 * Key => value of cookies to send
+	 * @var array
+	 */
 	protected $_cookies = array();
+
+	/**
+	 * User agent for query
+	 * @var string
+	 */
 	protected $_userAgent = 'alexsoft/curl';
 
+	/**
+	 * @param $url string URL for query
+	 */
 	public function __construct($url) {
 		$this->_url = $url;
 	}
 
+	/**
+	 * Add data for sending
+	 * @param array $data
+	 * @return $this
+	 */
 	public function addData(array $data) {
 		$this->_data = array_merge(
 			$this->_data,
@@ -49,6 +90,11 @@ class Curl {
 		return $this;
 	}
 
+	/**
+	 * Add headers for sending
+	 * @param array $headers
+	 * @return $this
+	 */
 	public function addHeaders(array $headers) {
 		$this->_headers = array_merge(
 			$this->_headers,
@@ -57,6 +103,11 @@ class Curl {
 		return $this;
 	}
 
+	/**
+	 * Add cookies for sending
+	 * @param array $cookies
+	 * @return $this
+	 */
 	public function addCookies(array $cookies) {
 		$this->_cookies = array_merge(
 			$this->_cookies,
@@ -65,30 +116,58 @@ class Curl {
 		return $this;
 	}
 
+	/**
+	 * Perform GET query
+	 * @return array|NULL
+	 */
 	public function get() {
 		return $this->_request(static::GET);
 	}
 
+	/**
+	 * Perform POST query
+	 * @return array|NULL
+	 */
 	public function post() {
 		return $this->_request(static::POST);
 	}
 
+	/**
+	 * Perform HEAD query
+	 * @return array|NULL
+	 */
 	public function head() {
 		return $this->_request(static::HEAD);
 	}
 
+	/**
+	 * Perform PUT query
+	 * @return array|NULL
+	 */
 	public function put() {
 		return $this->_request(static::PUT);
 	}
 
+	/**
+	 * Perform DELETE query
+	 * @return array|NULL
+	 */
 	public function delete() {
 		return $this->_request(static::DELETE);
 	}
 
+	/**
+	 * Perform OPTIONS query
+	 * @return array|NULL
+	 */
 	public function options() {
 		return $this->_request(static::OPTIONS);
 	}
 
+	/**
+	 * @param $method string method of query
+	 * @return array|NULL
+	 */
 	protected function _request($method) {
 		$this->_resource = curl_init();
 		$this->_method = $method;
@@ -98,6 +177,10 @@ class Curl {
 		return $this->_parseResponse();
 	}
 
+	/**
+	 * Method which sets all the data, headers, cookies
+	 * and other options for the query
+	 */
 	protected function _prepareRequest() {
 		// Set data for GET queries
 		if ($this->_method === static::GET && !empty($this->_data)) {
@@ -148,6 +231,10 @@ class Curl {
 		curl_setopt_array($this->_resource, $options);
 	}
 
+	/**
+	 * Method which parses cURL response
+	 * @return array|NULL
+	 */
 	protected function _parseResponse() {
 		if (isset($this->_response)) {
 			list($responseParts['headersString'], $responseParts['body']) = explode("\r\n\r\n", $this->_response, 2);
