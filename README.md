@@ -14,7 +14,7 @@ Added methods:
 - DELETE
 - OPTIONS
 
-Cookies are parsed with help of preg_match_all
+Cookies are parsed with help of preg_match_all.
 
 ### v0.2.1
 Methods:
