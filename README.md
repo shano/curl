@@ -2,11 +2,15 @@
 
 ## Versions and changelog
 
+### v0.4.0-dev (dev-master)
+Got rid of get(), post(), head(), put(), delete(), options() methods.  
+Instead a __call method now does everything.  
+
 ### v0.3.0
-Wrapper is totally reworked almost from scratch!
-Different approach for setting data, headers and cookies.
-Just open the class and see it!
-And by the way all class is now documented!
+Wrapper is totally reworked almost from scratch!  
+Different approach for setting data, headers and cookies.  
+Just open the class and see it!  
+And by the way all class is now documented!  
 
 ### v0.2.2
 Added methods:
