@@ -7,13 +7,13 @@
  * @author  Alex Plekhanov
  * @link    https://github.com/alexsoft/curl
  * @license MIT
- * @version 0.3.0
+ * @version 0.4.0-dev
  */
 
 namespace Alexsoft;
 
 class Curl {
-	const VERSION = '0.3.0';
+	const VERSION = '0.4.0-dev';
 
 	const GET = 'GET';
 	const POST = 'POST';
@@ -71,9 +71,16 @@ class Curl {
 	protected $_userAgent = 'alexsoft/curl';
 
 	/**
+	 * Array of available HTTP Verbs
+	 * @var array
+	 */
+	protected  $_availableMethods = array();
+
+	/**
 	 * @param $url string URL for query
 	 */
 	public function __construct($url) {
+		$this->_availableMethods = array(static::GET, static::POST, static::HEAD, static::PUT, static::DELETE, static::OPTIONS);
 		$this->_url = $url;
 	}
 
@@ -117,51 +124,20 @@ class Curl {
 	}
 
 	/**
-	 * Perform GET query
+	 * Methods which can be called:
+	 * get(), post(), head(), put(), delete(), options()
+	 * @param $name
+	 * @param $arguments
 	 * @return array|NULL
+	 * @throws \Exception
 	 */
-	public function get() {
-		return $this->_request(static::GET);
-	}
-
-	/**
-	 * Perform POST query
-	 * @return array|NULL
-	 */
-	public function post() {
-		return $this->_request(static::POST);
-	}
-
-	/**
-	 * Perform HEAD query
-	 * @return array|NULL
-	 */
-	public function head() {
-		return $this->_request(static::HEAD);
-	}
-
-	/**
-	 * Perform PUT query
-	 * @return array|NULL
-	 */
-	public function put() {
-		return $this->_request(static::PUT);
-	}
-
-	/**
-	 * Perform DELETE query
-	 * @return array|NULL
-	 */
-	public function delete() {
-		return $this->_request(static::DELETE);
-	}
-
-	/**
-	 * Perform OPTIONS query
-	 * @return array|NULL
-	 */
-	public function options() {
-		return $this->_request(static::OPTIONS);
+	function __call($name, $arguments)
+	{
+		if (in_array(mb_strtoupper($name), $this->_availableMethods)) {
+			return $this->_request(mb_strtoupper($name));
+		} else {
+			throw new \Exception('Method ' . mb_strtoupper($name) . ' is not supported');
+		}
 	}
 
 	/**
