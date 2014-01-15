@@ -29,5 +29,7 @@ Methods:
 You can send data, headers and cookies along with the queries.
 
 ## Roadmap
+- Make setOptions method
+- Make downloading images possible
 - Refactor _parseResponse method
 - Make a documentation
