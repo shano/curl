@@ -1,5 +1,8 @@
 # cURL wrapper
 
+[![Latest Stable Version](https://poser.pugx.org/alexsoft/curl/v/stable.png)](https://packagist.org/packages/alexsoft/curl)
+[![License](https://poser.pugx.org/alexsoft/curl/license.png)](https://packagist.org/packages/alexsoft/curl)
+
 ## Versions and changelog
 
 ### v0.4.0-dev (dev-master)
