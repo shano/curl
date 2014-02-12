@@ -4,7 +4,7 @@ use Alexsoft\Curl;
 class CurlTest extends PHPUnit_Framework_TestCase {
 
 	public function testIsCurl() {
-		$curl = new Curl('http://github.com');
+		$curl = new Curl('http://github.com/alexsoft/curl');
 
 		$this->assertInstanceOf('Alexsoft\Curl', $curl);
 
