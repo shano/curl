@@ -46,6 +46,12 @@ class Curl {
 	 */
 	protected $_method;
 
+    /**
+     * Response header size
+     * @var string
+     */
+    protected $_headerSize;
+
 	/**
 	 * Key => value of data to send
 	 * @var array
@@ -150,6 +156,7 @@ class Curl {
 		$this->_prepareRequest();
 		$this->_response = curl_exec($this->_resource);
 		curl_close($this->_resource);
+        $this->_headerSize = curl_getinfo($this->_resource, CURLINFO_HEADER_SIZE);
 		return $this->_parseResponse();
 	}
 
@@ -213,7 +220,12 @@ class Curl {
 	 */
 	protected function _parseResponse() {
 		if (isset($this->_response)) {
-			list($responseParts['headersString'], $responseParts['body']) = explode("\r\n\r\n", $this->_response, 2);
+            if(isset($this->_headerSize)) {
+                $responseParts['headersString'] = trim(substr($this->_response, 0, $this->_headerSize));
+                $responseParts['body'] = substr($this->_response, $this->_headerSize);
+            } else {
+                list($responseParts['headersString'], $responseParts['body']) = explode("\r\n\r\n", $this->_response, 2);
+            }
 			$responseParts['body'] = htmlspecialchars($responseParts['body']);
 			$headers = explode("\r\n", $responseParts['headersString']);
 			$cookies = array();
