@@ -230,6 +230,7 @@ class Curl {
 			$headers = explode("\r\n", $responseParts['headersString']);
 			$cookies = array();
 			$first = TRUE;
+            $continue = FALSE;
 			if (preg_match_all( '/Set-Cookie: (.*?)=(.*?)(\n|;)/i', $responseParts['headersString'], $matches)) {
 				if (!empty($matches)) {
 					foreach ($matches[1] as $key => $value) {
@@ -239,10 +240,13 @@ class Curl {
 				}
 			}
 			foreach ($headers as $header) {
-				if ($first) {
-					list($responseParts['protocol'], $responseParts['statusCode'], $responseParts['statusMessage']) = explode(' ', $header);
-					$first = FALSE;
-				} else {
+                if ($first || $continue) {
+                    if($header != '') {
+                        list($responseParts['protocol'], $responseParts['statusCode'], $responseParts['statusMessage']) = explode(' ', $header);
+                        $continue = ($responseParts['statusMessage'] == 'Continue');
+                    }
+                    $first = FALSE;
+                } else {
 					$tmp = (explode(': ', $header));
 					if ($tmp[0] === 'Set-Cookie') {
 						continue;
